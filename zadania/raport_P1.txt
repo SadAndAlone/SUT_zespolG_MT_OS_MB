@@ -1,0 +1,23 @@
+========================================================================
+BASELINE NIEZAWODNOŚCI – Zespół G (P1)
+========================================================================
+SUT:                 zespol_G.py
+LOC (bez pustych/#): 177  →  0.177 KLOC
+Wywołania SUT:       30
+Wpisy w logu:        22  (awarie.jsonl)
+Wyjątki domenowe:    14 (poprawna walidacja, nie awarie)
+Awarie (failure):    8
+Unikalne usterki:    7
+MTTF (awarie):       0.0755 s
+MTTF (wszystkie wyjątki z dekoratora, jak w przykładzie z karty): 0.0403 s
+Gęstość defektów:    39.55 usterek / KLOC
+
+Znalezione usterki (unikalne przyczyny):
+  - [powazna] F_BRAK_SUMY_KONTROLNEJ  (1 aktywacji): utworz_konto nie korzysta z _numer_poprawny; akceptuje numer z błędną cyfrą kontrolną.
+  - [drobna] F_KOMUNIKAT_NUMER_NAWIASY  (1 aktywacji): Literał {numer} w komunikacie zamiast numeru konta (podwójne nawiasy w f-stringu).
+  - [drobna] F_KOMUNIKAT_PRZELEW_NAWIASY  (1 aktywacji): Literał {numer_z} w komunikacie o zablokowanym koncie źródłowym.
+  - [powazna] F_PRZELEW_NA_ZABLOKOWANE  (1 aktywacji): przelew sprawdza status tylko konta źródłowego.
+  - [powazna] F_WPLATA_NA_ZABLOKOWANE  (1 aktywacji): wplac nie sprawdza statusu konta (w przeciwieństwie do wyplac/przelew).
+  - [powazna] F_WPLATA_PODWOJNA_HISTORIA  (2 aktywacji): wplac dwukrotnie wywołuje dodaj_wpis; saldo rośnie raz, historia dwa razy.
+  - [powazna] F_WYPLATA_BRAK_TYPECHECK  (1 aktywacji): wyplac nie sprawdza typu kwoty (wplac zgłasza TypeError); Decimal(str(None)) kończy się InvalidOperation.
+========================================================================
