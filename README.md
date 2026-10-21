@@ -1,0 +1,2 @@
+# SUT_zespolG_MT_OS_MB
+Niezawodnosc systemow informatycznych
