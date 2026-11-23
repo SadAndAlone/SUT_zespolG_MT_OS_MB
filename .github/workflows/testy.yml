@@ -1,0 +1,49 @@
+name: Testy P7 - CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  testy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Pobranie kodu
+        uses: actions/checkout@v4
+
+      - name: Konfiguracja Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Instalacja zaleznosci
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Testy jednostkowe i funkcjonalne + pokrycie
+        run: |
+          python -m pytest tests -v --cov=zespol_G --cov-report=term-missing --cov-report=xml:coverage.xml --junitxml=pytest-results.xml
+
+      # Skrypt P5 trzeba dodac do repozytorium. Zgodnie z Raportem P5
+      # w starej wersji SUT wykrywa on znana usterke historii wplat
+      # i moze zakonczyc sie kodem 1. Nie ukrywamy bledow.
+      - name: Testy niefunkcjonalne P5
+        if: ${{ !cancelled() }}
+        run: python test_nonfunctional_p5.py
+
+      - name: Archiwizacja wynikow
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: raporty-testow
+          path: |
+            coverage.xml
+            pytest-results.xml
+            wyniki_P5.json
+          if-no-files-found: warn
